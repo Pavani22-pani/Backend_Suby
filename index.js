@@ -12,7 +12,7 @@ const app=express()
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(cors())
 
-const PORT=4000
+const PORT=process.env.PORT||4000
 
 dotEnv.config()
 
@@ -27,7 +27,7 @@ app.use('/firm',firmRoutes)
 app.use('/product',productRoutes)
 app.use('/uploads',express.static('uploads'))
 
-app.use('/home',(req,res)=>{
+app.use('/',(req,res)=>{
     res.send('<h1> Welcome to Suby')
 
 })
