@@ -32,11 +32,12 @@ const PORT=process.env.PORT||4000
 
 dotEnv.config()
 
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("MongoDb Connected Sucessfully!!!"))
-.catch((error)=>{console.log(error)})
-
-app.use(bodyParser.json())
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ Database connected successfully"))
+.catch(err => console.error("❌ Database connection error:", err));
 
 app.use('/vendor',vendorRoutes)
 app.use("/user",userRoutes)
