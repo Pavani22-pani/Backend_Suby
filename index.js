@@ -9,21 +9,32 @@ const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const path = require("path");
 const cors = require('cors');
-require('./models/Order');  
+require('./models/Order');  // Import to ensure middleware runs
 
 const app = express();
+const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 
-// ✅ Correct CORS Configuration
+// ✅ Correct CORS Configuration (Dynamic Origin Setup)
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", ["http://localhost:5173", "http://localhost:5174"]);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, token");
-    res.header("Access-Control-Allow-Credentials", "true"); 
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin); // ✅ Dynamic Origin
+    }
+
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, token");
+    res.setHeader("Access-Control-Allow-Credentials", "true"); // ✅ Important for cookies/auth headers
+
+    // ✅ Handle OPTIONS preflight request
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200); // Stops OPTIONS requests from proceeding further
+    }
+
     next();
 });
 
-const PORT = process.env.PORT || 4000;
-
+// ✅ Load Environment Variables
 dotEnv.config();
 
 // ✅ Database Connection
@@ -38,10 +49,10 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(express.json());
 app.use(bodyParser.json());
 
-// ✅ Static File Handling (Moved Above Routes)
+// ✅ Static File Handling
 app.use('/uploads', express.static('uploads'));
 
-// ✅ Route Order
+// ✅ Route Definitions
 app.use('/vendor', vendorRoutes);
 app.use("/user", userRoutes);
 app.use('/firm', firmRoutes);
@@ -54,6 +65,7 @@ app.use('/', (req, res) => {
 });
 
 // ✅ Start Server
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`✅ Server started and running at port ${PORT}`);
 });
