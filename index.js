@@ -9,30 +9,24 @@ const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const path = require("path");
 const cors = require('cors');
-require('./models/Order');  // Import to ensure middleware runs
+require('./models/Order');  
 
 const app = express();
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 
-// ✅ Correct CORS Configuration (Only Once)
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'] // ✅ Important for POST/PUT requests
-}));
+// ✅ Correct CORS Configuration
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", ["http://localhost:5173", "http://localhost:5174"]);
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, token");
+    res.header("Access-Control-Allow-Credentials", "true"); 
+    next();
+});
 
 const PORT = process.env.PORT || 4000;
 
 dotEnv.config();
 
-// ✅ Correct Database Connection
+// ✅ Database Connection
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -44,14 +38,15 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(express.json());
 app.use(bodyParser.json());
 
-// ✅ Correct Route Order
+// ✅ Static File Handling (Moved Above Routes)
+app.use('/uploads', express.static('uploads'));
+
+// ✅ Route Order
 app.use('/vendor', vendorRoutes);
 app.use("/user", userRoutes);
 app.use('/firm', firmRoutes);
 app.use('/product', productRoutes);
 app.use('/order', orderRoutes);
-
-app.use('/uploads', express.static('uploads'));
 
 // ✅ Root Route
 app.use('/', (req, res) => {
