@@ -6,6 +6,7 @@ const path=require("path")
 const router=express.Router()
 router.post('/add-product/:firmId',productController.addProduct)
 router.get('/:firmId/products',productController.getProductByFirm)
+router.get("/single-product/:id",productController.getProductById)
 //for getting images
 
 router.get('/uploads/:imageName', (req, res) => {

@@ -142,6 +142,19 @@ const deleteFirmById = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+const getAreas = async (req, res) => {
+    try {
+        // Fetch unique city names from the Firm collection
+        const cities = await Firm.distinct("area");
+
+        res.status(200).json(cities);
+    } catch (error) {
+        console.error("Error fetching cities:", error);
+        res.status(500).json({ message: "Failed to fetch city data." });
+    }
+};
+
+
 
 // Export with multer middleware for image upload
-module.exports = { addFirm: [upload.single("image"), addFirm], deleteFirmById };
+module.exports = { addFirm: [upload.single("image"), addFirm], deleteFirmById,getAreas };

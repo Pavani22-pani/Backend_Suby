@@ -14,6 +14,7 @@ router.get('/uploads/:imageName',(req,res)=>{
     res.sendFile(path.join(__dirname ,'..','uploads',imageName))
 
 })
-router.delete("/:firmId",firmController.deleteFirmById)
+router.delete("/delete/:firmId",firmController.deleteFirmById)
+router.get('/areas',firmController.getAreas)
 
 module.exports=router
