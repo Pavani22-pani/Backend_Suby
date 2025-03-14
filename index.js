@@ -13,6 +13,14 @@ require('./models/Order');  // Import to ensure middleware runs
 
 const app=express()
 const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+app.use(cors());
+
+// OR restrict CORS to specific frontend URL (recommended for production)
+app.use(cors({
+    origin: 'http://localhost:5174',  // Your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 
 app.use(
   cors({
