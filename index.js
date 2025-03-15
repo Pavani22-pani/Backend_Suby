@@ -61,7 +61,7 @@ app.use('/order', orderRoutes);
 
 // ✅ Root Route
 app.use('/', (req, res) => {
-    res.send('<h1>Welcome to Suby</h1>');
+    res.send('<h1>Welcome to Tasygo</h1>');
 });
 
 // ✅ Start Server
